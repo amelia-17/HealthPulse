@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>HealthPulse Analytics</title>
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Custom CSS -->
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}">
+
+<style>
+.streaming-implementation-card .algorithm-result-card { border: 1px solid rgba(0,0,0,.08); border-radius: 14px; padding: 18px; height: 100%; background: #fff; box-shadow: 0 4px 14px rgba(0,0,0,.04); }
+.streaming-implementation-card .algorithm-result-title { font-weight: 700; font-size: 1.05rem; margin-bottom: 12px; }
+.streaming-implementation-card .algorithm-decision { font-size: 1.25rem; font-weight: 700; margin-bottom: 12px; }
+.streaming-implementation-card .algorithm-detail { font-size: .9rem; margin-top: 7px; word-break: break-word; }
+.streaming-implementation-card .algorithm-explanation { margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(0,0,0,.08); font-size: .86rem; color: #6c757d; line-height: 1.45; }
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- ======================================================
+     NAVBAR
+====================================================== -->
+
+<nav class="navbar navbar-dark shadow-sm">
+
+    <div class="container-fluid px-4">
+
+        <div>
+
+            <div class="navbar-brand fw-bold">
+
+                <i class="bi bi-heart-pulse-fill"></i>
+
+                HealthPulse Analytics
+
+            </div>
+
+            <div class="navbar-subtitle">
+
+                Patient Flow Monitoring &
+                Disease Outbreak Detection
+
+            </div>
+
+        </div>
+
+
+        <div class="d-flex align-items-center gap-3">
+
+            <span
+                id="lastUpdated"
+                class="last-updated">
+
+                Last updated: --
+
+            </span>
+
+
+            <button
+                id="refreshButton"
+                class="btn btn-light btn-sm">
+
+                <i class="bi bi-arrow-clockwise"></i>
+
+                Refresh Data
+
+            </button>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+
+<!-- ======================================================
+     MAIN
+====================================================== -->
+
+<main class="container-fluid px-4 py-4">
+
+
+    <!-- HEADER -->
+
+
+
+        <div class="system-status">
+
+            <span class="status-dot"></span>
+
+            <span>
+                System Online
+            </span>
+
+        </div>
+
+    </div>
+    </br>	
+
+
+    <!-- ==================================================
+         KPI CARDS
+    ================================================== -->
+
+    <div class="row g-3 mb-4">
+
+
+        <!-- Disease Records -->
+
+        <div class="col-xl-3 col-md-6">
+
+            <div
+                class="kpi-card"
+                data-section="historical">
+
+                <div class="kpi-icon">
+
+                    <i class="bi bi-bar-chart-fill"></i>
+
+                </div>
+
+
+                <div>
+
+                    <div class="kpi-title">
+                        Disease Records
+                    </div>
+
+                    <div
+                        id="diseaseRecords"
+                        class="kpi-value">
+
+                        --
+
+                    </div>
+
+                    <div id="kpiDiseaseDesc" class="kpi-description">
+
+                        Historical patient analysis
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- Alerts -->
+
+        <div class="col-xl-3 col-md-6">
+
+            <div
+                class="kpi-card alert-card"
+                data-section="alerts">
+
+                <div class="kpi-icon">
+
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+
+                </div>
+
+
+                <div>
+
+                    <div class="kpi-title">
+                        Disease Alerts
+                    </div>
+
+                    <div
+                        id="bloomAlerts"
+                        class="kpi-value">
+
+                        --
+
+                    </div>
+
+                    <div id="kpiAlertsDesc" class="kpi-description">
+
+                        Notifiable disease alerts
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- Case Monitoring -->
+
+        <div class="col-xl-3 col-md-6">
+
+            <div
+                class="kpi-card"
+                data-section="monitoring">
+
+                <div class="kpi-icon">
+
+                    <i class="bi bi-activity"></i>
+
+                </div>
+
+
+                <div>
+
+                    <div class="kpi-title">
+                        Case Monitoring
+                    </div>
+
+                    <div
+                        id="dgimRecords"
+                        class="kpi-value">
+
+                        --
+
+                    </div>
+
+                    <div id="kpiCasesDesc" class="kpi-description">
+
+                        Recent case activity
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- Localities -->
+
+        <div class="col-xl-3 col-md-6">
+
+            <div
+                class="kpi-card"
+                data-section="monitoring">
+
+                <div class="kpi-icon">
+
+                    <i class="bi bi-geo-alt-fill"></i>
+
+                </div>
+
+
+                <div>
+
+                    <div id="kpiLocTitle" class="kpi-title">
+                        Estimated Localities
+                    </div>
+
+                    <div
+                        id="fmLocalities"
+                        class="kpi-value">
+
+                        --
+
+                    </div>
+
+                    <div id="kpiLocDesc" class="kpi-description">
+
+                        Distinct affected localities
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ==================================================
+         TABS
+    ================================================== -->
+
+    <div class="dashboard-tabs mb-4">
+
+
+        <button
+            class="dashboard-tab active"
+            data-tab="historical">
+
+            <i class="bi bi-database"></i>
+
+            Historical Analytics
+
+        </button>
+
+
+        <button
+            class="dashboard-tab"
+            data-tab="monitoring">
+
+            <i class="bi bi-activity"></i>
+
+            Real-Time Monitoring
+
+        </button>
+
+
+        <button
+            class="dashboard-tab"
+            data-tab="alerts">
+
+            <i class="bi bi-bell"></i>
+
+            Alerts
+
+        </button>
+
+
+        <button
+            class="dashboard-tab"
+            data-tab="capacity">
+
+            <i class="bi bi-hospital"></i>
+
+            Hospital Capacity
+
+        </button>
+
+    </div>
+
+
+
+    <!-- ==================================================
+         HISTORICAL ANALYTICS
+    ================================================== -->
+
+    <section
+        id="historicalSection"
+        class="dashboard-section active">
+
+
+        <div class="row g-4">
+
+
+            <!-- Disease Chart -->
+
+            <div class="col-xl-7">
+
+                <div class="dashboard-card">
+
+                    <div class="card-header-custom">
+
+                        <div>
+
+                            <h3>
+                                Disease-wise Case Counts
+                            </h3>
+
+                            <p>
+                                Historical disease case analysis
+                            </p>
+
+                        </div>
+
+
+                        <select
+                            id="diseaseSort"
+                            class="form-select form-select-sm">
+
+                            <option value="desc">
+                                Highest first
+                            </option>
+
+                            <option value="asc">
+                                Lowest first
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="chart-container">
+
+                        <canvas id="diseaseChart"></canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- LOS Chart -->
+
+            <div class="col-xl-5">
+
+                <div class="dashboard-card">
+
+                    <div class="card-header-custom">
+
+                        <div>
+
+                            <h3>
+                                Average Length of Stay
+                            </h3>
+
+                            <p>
+                                Average stay by admission type
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="chart-container">
+
+                        <canvas id="losChart"></canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- Disease Table -->
+
+        <div class="dashboard-card mt-4">
+
+            <div class="card-header-custom">
+
+                <div>
+
+                    <h3>
+                        Disease Data Explorer
+                    </h3>
+
+                    <p>
+                        Search and inspect disease counts
+                    </p>
+
+                </div>
+
+
+                <div class="table-search">
+
+                    <i class="bi bi-search"></i>
+
+                    <input
+                        id="diseaseSearch"
+                        type="text"
+                        placeholder="Search disease...">
+
+                </div>
+
+            </div>
+
+
+            <div class="table-responsive">
+
+                <table class="table interactive-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                #
+                            </th>
+
+                            <th>
+                                Disease
+                            </th>
+
+                            <th>
+                                Count
+                            </th>
+
+                            <th>
+                                Distribution
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="diseaseTable"></tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- LOS Table -->
+
+        <div class="dashboard-card mt-4">
+
+            <div class="card-header-custom">
+
+                <div>
+
+                    <h3>
+                        Admission Type LOS
+                    </h3>
+
+                    <p>
+                        Average hospital length of stay
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="table-responsive">
+
+                <table class="table interactive-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Admission Type
+                            </th>
+
+                            <th>
+                                Average LOS
+                            </th>
+
+                            <th>
+                                Visual
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="losTable"></tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+    </section>
+
+
+
+
+    <!-- ==================================================
+         HOSPITAL CAPACITY
+    ================================================== -->
+
+    <section
+        id="capacitySection"
+        class="dashboard-section">
+
+        <div class="dashboard-card">
+
+            <div class="card-header-custom">
+
+                <div>
+
+                    <h3>
+                        Hospital Bed Capacity
+                    </h3>
+
+                    <p>
+                        Reported hospital bed-capacity information.
+                        This is not a live bed-availability feed.
+                    </p>
+
+                </div>
+
+
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+
+                    <label
+                        for="capacityMetricFilter"
+                        class="form-label mb-0">
+
+                        Metric
+
+                    </label>
+
+                    <select
+                        id="capacityMetricFilter"
+                        class="form-select form-select-sm">
+
+                        <option value="">
+                             All Metrics
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div class="capacity-note simulation-note mb-3">
+
+                <i class="bi bi-info-circle"></i>
+
+                Values are shown for the latest period returned
+                by the system and the selected geographic level.
+                Do not add values across different geographic levels.
+
+            </div>
+
+
+            <div class="chart-container large-chart">
+
+                <canvas id="capacityChart"></canvas>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="dashboard-card mt-4">
+
+            <div class="card-header-custom">
+
+                <div>
+
+                    <h3>
+                        Capacity Data Explorer
+                    </h3>
+
+                    <p id="capacitySnapshotLabel">
+                        Loading snapshot information...
+                    </p>
+
+                </div>
+
+
+                <span
+                    id="capacityRecordCount"
+                    class="badge bg-primary">
+
+                    -- records
+
+                </span>
+
+            </div>
+
+
+            <div class="table-responsive">
+
+                <table class="table interactive-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Period
+                            </th>
+
+                            <th>
+                                Level
+                            </th>
+
+                            <th>
+                                Region / Organisation
+                            </th>
+
+                            <th>
+                                Metric
+                            </th>
+
+                            <th>
+                                Bed Type
+                            </th>
+
+                            <th class="text-end">
+                                Value
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="capacityTable"></tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ==================================================
+         MONITORING
+    ================================================== -->
+
+    <section
+        id="monitoringSection"
+        class="dashboard-section">
+
+        <!-- ==============================================
+             LIVE STREAM
+        =============================================== -->
+        <div class="dashboard-card mb-4" id="liveCard">
+            <div class="card-header-custom">
+                <div>
+                    <h3>Live Patient Event Stream</h3>
+                    <p>
+                        Patient admissions arrive one at a time. Each event is processed once by
+                        Bloom Filter, DGIM and Flajolet-Martin; events are not stored.
+                    </p>
+                </div>
+                <span id="liveStatus" class="badge bg-secondary">Stopped</span>
+            </div>
+
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label for="liveSource" class="form-label">Stream source</label>
+                    <select id="liveSource" class="form-select">
+                        <option value="mimic" selected>MIMIC-IV Demo replay (real admissions)</option>
+                        <option value="simulated">Simulated hospital events</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="liveWatch" class="form-label">Group to watch (DGIM)</label>
+                    <select id="liveWatch" class="form-select"></select>
+                </div>
+                <div class="col-md-2">
+                    <label for="liveRate" class="form-label">Arrival rate</label>
+                    <select id="liveRate" class="form-select">
+                        <option value="2">2 / second</option>
+                        <option value="5" selected>5 / second</option>
+                        <option value="10">10 / second</option>
+                        <option value="25">25 / second</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button id="liveStart" type="button" class="btn btn-success w-100">
+                        <i class="bi bi-broadcast me-1"></i> Start
+                    </button>
+                </div>
+                <div class="col-md-2">
+                    <button id="liveStop" type="button" class="btn btn-outline-danger w-100" disabled>
+                        <i class="bi bi-stop-circle me-1"></i> Stop
+                    </button>
+                </div>
+            </div>
+            <div class="form-check mt-2">
+                <input id="liveLoop" class="form-check-input" type="checkbox">
+                <label for="liveLoop" class="form-check-label small">Repeat the replay when it reaches the end</label>
+            </div>
+            <div id="liveSourceNote" class="small text-muted mt-1"></div>
+
+            <div id="liveError" class="alert alert-danger mt-3 d-none"></div>
+
+            <div class="row g-3 mt-2">
+                <div class="col-md-3"><div class="p-3 border rounded"><div class="text-muted small">Events processed <span id="liveProgress" class="text-muted"></span></div><h4 id="liveEvents">0</h4></div></div>
+                <div class="col-md-3"><div class="p-3 border rounded"><div class="text-muted small">Bloom: reportable condition flagged</div><h4 id="liveFlagged">0</h4></div></div>
+                <div class="col-md-3"><div class="p-3 border rounded"><div class="text-muted small">DGIM cases in window <span id="liveWindowLabel"></span></div>
+                    <h4><span id="liveDgimEst">0</span> <small class="text-muted">est.</small> / <span id="liveDgimExact">0</span> <small class="text-muted">exact</small></h4>
+                    <span id="liveDgimStatus" class="badge bg-success">NORMAL</span></div></div>
+                <div class="col-md-3"><div class="p-3 border rounded"><div class="text-muted small">Flajolet-Martin: <span id="liveFmLabel">distinct patients</span></div>
+                    <h4><span id="liveFmEst">0</span> <small class="text-muted">est.</small> / <span id="liveFmExact">0</span> <small class="text-muted">exact</small></h4></div></div>
+            </div>
+
+            <div class="row g-3 mt-1">
+                <div class="col-lg-7">
+                    <div style="height:260px"><canvas id="liveChart"></canvas></div>
+                    <div class="small mt-2"><strong>Last events (1 = watched disease):</strong>
+                        <code id="liveBits">-</code></div>
+                    <div class="small"><strong>DGIM buckets:</strong> <code id="liveBuckets">-</code></div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="table-responsive" style="max-height:300px;overflow-y:auto">
+                        <table class="table table-sm">
+                            <thead><tr><th>Date / time</th><th>Group &amp; diagnosis</th><th>Location / source</th><th>Bloom</th></tr></thead>
+                            <tbody id="liveFeed"><tr><td colspan="4" class="text-muted">Start the stream to see events.</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-card mb-4 streaming-implementation-card">
+
+            <div class="card-header-custom">
+                <div>
+                    <h3>
+                        Real-Time Streaming Algorithm Implementation
+                    </h3>
+                    <p>
+                        Enter one simulated patient event to execute Bloom Filter, DGIM and Flajolet-Martin on the dashboard.
+                    </p>
+                </div>
+                <span id="streamImplementationStatus" class="badge bg-secondary">Ready</span>
+            </div>
+
+            <form id="streamEventForm" class="row g-3 align-items-end">
+                <div class="col-lg-3 col-md-6">
+                    <label for="streamDisease" class="form-label">Disease</label>
+                    <input id="streamDisease" class="form-control" list="streamDiseaseList" placeholder="e.g. Dengue" required>
+                    <datalist id="streamDiseaseList">
+                        <option value="Cholera"></option>
+                        <option value="Dengue"></option>
+                        <option value="Malaria"></option>
+                        <option value="Measles"></option>
+                        <option value="Tuberculosis"></option>
+                        <option value="Typhoid"></option>
+                    </datalist>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <label for="streamPatientId" class="form-label">Patient ID</label>
+                    <input id="streamPatientId" class="form-control" placeholder="e.g. P1001" required>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <label for="streamLocality" class="form-label">Locality</label>
+                    <input id="streamLocality" class="form-control" placeholder="e.g. Mumbai" required>
+                </div>
+
+                <div class="col-lg-3 col-md-6 d-flex gap-2">
+                    <button id="streamAnalyzeButton" type="submit" class="btn btn-primary flex-grow-1">
+                        <i class="bi bi-play-circle me-1"></i> Analyze Event
+                    </button>
+                    <button id="streamResetButton" type="button" class="btn btn-outline-secondary" title="Clear interactive stream">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            </form>
+
+            <div id="streamImplementationError" class="alert alert-danger mt-3 d-none"></div>
+
+            <div id="streamImplementationResults" class="row g-4 mt-1 d-none">
+                <div class="col-xl-4">
+                    <div class="algorithm-result-card bloom-result">
+                        <div class="algorithm-result-title"><i class="bi bi-shield-check"></i> Bloom Filter</div>
+                        <div id="streamBloomDecision" class="algorithm-decision">--</div>
+                        <div class="algorithm-detail"><strong>Hash positions:</strong> <span id="streamBloomPositions">--</span></div>
+                        <div class="algorithm-detail"><strong>Bits checked:</strong> <span id="streamBloomBits">--</span></div>
+                        <div class="algorithm-detail"><strong>Filter:</strong> <span id="streamBloomSize">--</span></div>
+                        <div class="algorithm-explanation" id="streamBloomExplanation">--</div>
+                    </div>
+                </div>
+
+                <div class="col-xl-4">
+                    <div class="algorithm-result-card dgim-result">
+                        <div class="algorithm-result-title"><i class="bi bi-graph-up-arrow"></i> DGIM</div>
+                        <div id="streamDGIMDecision" class="algorithm-decision">--</div>
+                        <div class="algorithm-detail"><strong>Window:</strong> <span id="streamDGIMWindow">--</span></div>
+                        <div class="algorithm-detail"><strong>Estimated cases:</strong> <span id="streamDGIMEstimate">--</span></div>
+                        <div class="algorithm-detail"><strong>Exact cases:</strong> <span id="streamDGIMExact">--</span></div>
+                        <div class="algorithm-detail"><strong>Binary tail:</strong> <span id="streamDGIMBits">--</span></div>
+                        <div class="algorithm-detail"><strong>Buckets:</strong> <span id="streamDGIMBuckets">--</span></div>
+                        <div class="algorithm-explanation" id="streamDGIMExplanation">--</div>
+                    </div>
+                </div>
+
+                <div class="col-xl-4">
+                    <div class="algorithm-result-card fm-result">
+                        <div class="algorithm-result-title"><i class="bi bi-geo-alt"></i> Flajolet-Martin</div>
+                        <div class="algorithm-decision"><span id="streamFMEstimate">--</span> estimated localities</div>
+                        <div class="algorithm-detail"><strong>Exact:</strong> <span id="streamFMExact">--</span></div>
+                        <div class="algorithm-detail"><strong>Max rho:</strong> <span id="streamFMRho">--</span></div>
+                        <div class="algorithm-detail"><strong>Absolute error:</strong> <span id="streamFMError">--</span></div>
+                        <div class="algorithm-detail"><strong>Percentage error:</strong> <span id="streamFMPercentage">--</span></div>
+                        <div class="algorithm-detail"><strong>Latest hash example:</strong> <span id="streamFMHash">--</span></div>
+                        <div class="algorithm-explanation" id="streamFMExplanation">--</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="simulation-note mt-3">
+                <i class="bi bi-info-circle"></i>
+                Each submission is one simulated stream event. It is processed once by Bloom Filter, DGIM and Flajolet-Martin, which update their compact state incrementally; the event is also logged in MongoDB as an audit trail.
+            </div>
+        </div>
+
+
+        <div class="row g-4">
+
+
+            <!-- Case Monitoring -->
+
+            <div class="col-xl-8">
+
+                <div class="dashboard-card">
+
+                    <div class="card-header-custom">
+
+                        <div>
+
+                            <h3>
+                                Case Monitoring
+                            </h3>
+
+                            <p id="dgimSubtitle">
+                                Chronological monitoring of
+                                patient case activity
+                            </p>
+
+                        </div>
+
+
+                        <span
+                            id="dgimStatus"
+                            class="badge status-badge">
+
+                            Loading...
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="chart-container large-chart">
+
+                        <canvas id="dgimChart"></canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- Locality Analysis -->
+
+            <div class="col-xl-4">
+
+                <div class="dashboard-card fm-card">
+
+                    <div class="fm-icon">
+
+                        <i class="bi bi-geo-alt-fill"></i>
+
+                    </div>
+
+
+                    <h3 id="fmTitle">
+                        Distinct Locality Analysis
+                    </h3>
+
+
+                    <p class="text-muted">
+
+                        Approximate count of distinct localities
+                        in the monitored patient stream.
+
+                    </p>
+
+
+                    <div class="fm-stat">
+
+                        <span id="fmPatientsLabel">
+                            Patient Records
+                        </span>
+
+                        <strong id="fmPatients">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="fm-stat">
+
+                        <span id="fmExactLabel">
+                            Exact Localities
+                        </span>
+
+                        <strong id="fmExact">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="fm-stat">
+
+                        <span id="fmEstimatedLabel">
+                            Estimated Localities
+                        </span>
+
+                        <strong id="fmEstimated">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="fm-stat">
+
+                        <span>
+                            Absolute Error
+                        </span>
+
+                        <strong id="fmError">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="fm-stat">
+
+                        <span>
+                            Percentage Error
+                        </span>
+
+                        <strong id="fmPercentage">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="simulation-note">
+
+                        <i class="bi bi-info-circle"></i>
+
+                        <span id="fmNote">Locality information is simulated
+                        for demonstration purposes.</span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- Case Monitoring Table -->
+
+        <div class="dashboard-card mt-4">
+
+            <div class="card-header-custom">
+
+                <div>
+
+                    <h3>
+                        Case Event Monitor
+                    </h3>
+
+                    <p>
+                        Latest chronological events
+                    </p>
+
+                </div>
+
+
+                <select
+                    id="dgimFilter"
+                    class="form-select form-select-sm">
+
+                    <option value="all">
+                        All Events
+                    </option>
+
+                    <option value="alerts">
+                        Spike Alerts Only
+                    </option>
+
+                    <option value="normal">
+                        Normal Only
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="table-responsive">
+
+                <table class="table interactive-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Event
+                            </th>
+
+                            <th>
+                                Date
+                            </th>
+
+                            <th>
+                                Disease
+                            </th>
+
+                            <th>
+                                Estimated Cases
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="dgimTable"></tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- ==================================================
+         ALERTS
+    ================================================== -->
+
+    <section
+        id="alertsSection"
+        class="dashboard-section">
+
+
+        <div class="row g-4">
+
+
+            <!-- Disease Alerts -->
+
+            <div class="col-xl-7">
+
+                <div class="dashboard-card">
+
+                    <div class="card-header-custom">
+
+                        <div>
+
+                            <h3>
+                                Notifiable Disease Alerts
+                            </h3>
+
+                            <p>
+                                Alerts generated from the
+                                monitored patient stream
+                            </p>
+
+                        </div>
+
+
+                        <select
+                            id="bloomFilter"
+                            class="form-select form-select-sm">
+
+                            <option value="all">
+                                All Diseases
+                            </option>
+
+                            <option value="Dengue">
+                                Dengue
+                            </option>
+
+                            <option value="Malaria">
+                                Malaria
+                            </option>
+
+                            <option value="Tuberculosis">
+                                Tuberculosis
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div
+                        id="bloomAlertsList"
+                        class="alert-list">
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- Alert Summary -->
+
+            <div class="col-xl-5">
+
+                <div class="dashboard-card">
+
+                    <h3>
+                        Alert Summary
+                    </h3>
+
+                    <p class="text-muted">
+
+                        Current monitoring indicators
+
+                    </p>
+
+
+                    <div class="alert-summary-item">
+
+                        <div class="summary-icon warning">
+
+                            <i class="bi bi-shield-exclamation"></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Disease Alerts
+                            </span>
+
+                            <strong id="alertSummaryBloom">
+                                --
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="alert-summary-item">
+
+                        <div class="summary-icon danger">
+
+                            <i class="bi bi-graph-up-arrow"></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Case Spike Events
+                            </span>
+
+                            <strong id="alertSummaryDGIM">
+                                --
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="alert-summary-item">
+
+                        <div class="summary-icon info">
+
+                            <i class="bi bi-geo-alt"></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <span id="alertSummaryFMLabel">
+                                Estimated Localities
+                            </span>
+
+                            <strong id="alertSummaryFM">
+                                --
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="simulation-note mt-4">
+
+                        <i class="bi bi-info-circle"></i>
+
+                        <span id="alertNote">Disease alerts and locality monitoring
+                        use simulated stream data.</span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- ==================================================
+         FOOTER
+    ================================================== -->
+
+    <footer class="dashboard-footer">
+
+        <div>
+
+            <strong>
+                HealthPulse Analytics
+            </strong>
+
+            <span>
+                | Patient Monitoring & Analytics Platform
+            </span>
+
+        </div>
+
+
+        <div>
+
+            Historical patient data |
+            Real-time monitoring
+
+        </div>
+
+    </footer>
+
+    </section>
+
+
+</main>
+
+
+
+<!-- ======================================================
+     CHART.JS
+====================================================== -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js">
+</script>
+
+
+<!-- ======================================================
+     DASHBOARD JAVASCRIPT
+====================================================== -->
+
+<script
+    src="{{ url_for('static', filename='js/dashboard.js') }}">
+</script>
+
+<script
+    src="{{ url_for('static', filename='js/live.js') }}">
+</script>
+
+
+</body>
+
+</html>

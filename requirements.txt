@@ -1,0 +1,10 @@
+# HealthPulse - Python dependencies
+# Install with:  pip install -r requirements.txt
+# Also required (not a pip package): MongoDB running at mongodb://localhost:27017/
+
+# Web app (healthpulse_web/app.py)
+Flask==3.1.3
+pymongo==4.18.1
+
+# Only for build_historical_data.py
+pandas>=2.0
